@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الجدول الدراسي</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #e0f7fa;
+            padding: 20px;
+            direction: rtl;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">إدارة الجدول الدراسي</h1>
+        <form id="dashboardForm" method="POST">
+            <div class="form-group">
+                <label for="h1_content">عنوان الجدول الدراسي</label>
+                <input type="text" id="h1_content" name="h1_content" class="form-control" value="{{ content.header }}">
+            </div>
+            <div class="form-group">
+                <label for="day">اليوم</label>
+                <select id="day" name="day" class="form-control">
+                    <option value="الأحد">الأحد</option>
+                    <option value="الإثنين">الإثنين</option>
+                    <option value="الثلاثاء">الثلاثاء</option>
+                    <option value="الأربعاء">الأربعاء</option>
+                    <option value="الخميس">الخميس</option>
+                </select>
+            </div>
+            {% for i in range(1, 9) %}
+            <div class="form-group">
+                <label for="class{{ i }}">الحصة {{ i }}</label>
+                <input type="text" id="class{{ i }}" name="class{{ i }}" class="form-control">
+                <label for="link{{ i }}">رابط الحصة {{ i }}</label>
+                <input type="text" id="link{{ i }}" name="link{{ i }}" class="form-control">
+            </div>
+            {% endfor %}
+            <div class="form-group">
+                <label for="footer">العنوان السفلي</label>
+                <input type="text" id="footer" name="footer" class="form-control" value="{{ content.footer }}">
+            </div>
+            <button type="submit" class="btn btn-primary">حفظ</button>
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $('#dashboardForm').on('submit', function(e) {
+            e.preventDefault();
+            const formData = $(this).serializeArray();
+            const data = {};
+            formData.forEach(item => {
+                data[item.name] = item.value;
+            });
+            
+            // Send AJAX request to update the content
+            $.ajax({
+                url: '/update',
+                method: 'POST',
+                data: data,
+                success: function(response) {
+                    alert('تم التحديث بنجاح');
+                },
+                error: function(error) {
+                    alert('حدث خطأ أثناء التحديث');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
